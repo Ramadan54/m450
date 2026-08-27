@@ -5,10 +5,10 @@ public class Preisberechnung {
         double addon_discount;
         double result;
 
-        if (extras >= 3)
-            addon_discount = 10;
-        else if (extras >= 5)
+        if (extras >= 5)
             addon_discount = 15;
+        else if (extras >= 3)
+            addon_discount = 10;
         else
             addon_discount = 0;
 
