@@ -132,3 +132,43 @@ In `Main` wird eine Bank erstellt, dann ein Jugend-Sparkonto und ein Lohnkonto (
 ### Klassendiagramm
 
 ![Klassendiagramm der Bank-Simulation](aufgabe3_4_bank/02_bank-vorgabe/Design/bank6_klassendiagramm.png)
+
+---
+
+## Aufgabe 4 – Unit-Tests für die Banken-Simulation
+
+Für die Banken-Simulation wurden mit JUnit 5 Unit-Tests geschrieben. Die vorgegebenen leeren Test-Gerüste (die nur `fail("toDo")` enthielten) wurden mit echten Testfällen gefüllt. Insgesamt sind es 25 Tests über sechs Testklassen.
+
+### Wichtig: Beträge in Millirappen
+
+In dieser Software werden alle Beträge in **Millirappen** gespeichert: 1 Franken = 100'000 Millirappen. 100 Franken sind also `10_000_000`. Das ist im Code an der Methode `formatAmount` erkennbar, die durch 100'000 teilt. In den Tests werden die Beträge deshalb in Millirappen angegeben.
+
+### Verwendete JUnit-Features
+
+- **`@Test`** – markiert eine Methode als Testfall.
+- **`@BeforeEach`** – wird vor jedem einzelnen Test ausgeführt und erstellt ein frisches Objekt. So sind die Tests unabhängig voneinander (ein Merkmal guter Unit-Tests).
+- **`@DisplayName`** – gibt jedem Test einen lesbaren Namen im Report.
+- **Assertions:** `assertEquals` (Wert prüfen), `assertTrue` / `assertFalse` (boolescher Rückgabewert), `assertNull` / `assertNotNull` (Objekt vorhanden?), `assertDoesNotThrow` (Methode läuft ohne Fehler – für `void`-Methoden wie `print()`, die keinen Rückgabewert haben).
+
+### Getestete Klassen und Besonderheiten
+
+- **AccountTests (8 Tests):** Da `Account` abstrakt ist, wird über die Unterklasse `SavingsAccount` getestet. Geprüft werden Initialisierung, Ein- und Auszahlen, Ablehnung negativer Beträge, die Vererbungs-Referenz, das `canTransact`-Flag (verhindert Transaktionen mit einem Datum vor der letzten Buchung) und die beiden `print`-Methoden.
+- **SavingsAccountTests (3 Tests):** Das Sparkonto darf nicht ins Minus. Getestet werden normales Abheben, Ablehnung bei zu hoher Abhebung und der Grenzfall, bei dem genau das ganze Guthaben abgehoben wird (Grenzwertanalyse).
+- **SalaryAccountTests (3 Tests):** Das Lohnkonto darf bis zur Kreditlimite (negative Zahl) ins Minus. Getestet werden Abheben im Guthaben, Abheben bis in den erlaubten Minusbereich und Ablehnung über die Limite hinaus.
+- **PromoYouthSavingsAccountTests (3 Tests):** Das Jugend-Sparkonto gewährt bei jeder Einzahlung 1% Bonus. Bei 100 Franken Einzahlung ergibt das 101 Franken. Zusätzlich gilt weiterhin die Sparkonto-Sperre gegen Überziehen.
+- **BookingTests (3 Tests):** Eine Buchung speichert Datum und Betrag. Getestet werden korrekte Speicherung, negative Beträge (Abhebungen werden als negative Buchung abgelegt) und die `print`-Methode.
+- **BankTests (5 Tests):** Die Bank verwaltet die Konten. Getestet werden Kontoerstellung, Ablehnung eines Lohnkontos mit ungültiger (positiver) Kreditlimite, Einzahlen über die Bank und die Fehlerfälle bei unbekannten Konten.
+
+### Ergebnis: Alle Tests grün und Code Coverage
+
+Alle 25 Tests laufen erfolgreich durch. Die Code Coverage wurde über "Run with Coverage" gemessen.
+
+![Alle Tests grün und Code Coverage](screenshots/a4_tests_und_coverage.png)
+
+Die Coverage-Werte im Überblick: Die gesamte fachliche Kernlogik ist zu 100% abgedeckt – Account (Zeilen 88%), SavingsAccount, SalaryAccount, PromoYouthSavingsAccount, Booking und BankUtils jeweils 100%. Nicht vollständig abgedeckt sind bewusst:
+
+- **Main (0%):** nur die Startklasse, enthält keine fachliche Logik.
+- **AccountBalanceComparator / AccountInverseBalanceComparator (0%):** reine Hilfsklassen zum Sortieren.
+- **Bank (35%):** die zentralen Methoden (Konto erstellen, ein-/auszahlen) sind getestet; Ausgabe-Methoden wie `printTop5` / `printBottom5` wurden nicht getestet.
+
+Das entspricht dem Grundsatz aus dem Lerninhalt: Unit-Tests sollen den relevanten Code testen und nicht triviale Teile wie die Startklasse oder reine Ausgabe-Methoden.
