@@ -101,3 +101,34 @@ void testIstGerade(int zahl) {
 ### Referenz
 
 Als Nachschlagewerk eignet sich die offizielle JUnit-5-Dokumentation: https://junit.org/junit5/docs/current/user-guide/
+
+---
+
+## Aufgabe 3 – Banken-Simulation verstehen
+
+Die Banken-Simulation ist ein objektorientiertes Beispiel mit Vererbung. Sie wurde als Maven-Projekt in IntelliJ geöffnet. Nachfolgend die Funktionsweise und die Zusammenhänge in Stichworten.
+
+### Klassen und ihre Aufgaben
+
+- **Account (abstrakt):** Basisklasse für alle Konten. Enthält Kontonummer (`id`), Kontostand (`balance`, in Millirappen) und eine Liste von Buchungen. Bietet `deposit` (einzahlen), `withdraw` (abheben), `canTransact` (prüft, ob das Datum gültig ist) und `print` (Kontoauszug). Weil abstrakt, kann man kein `Account` direkt erstellen – nur die Unterklassen.
+- **SavingsAccount (Sparkonto):** Erbt von Account. Überschreibt `withdraw` so, dass nicht mehr abgehoben werden kann, als vorhanden ist (kein negatives Saldo).
+- **SalaryAccount (Lohnkonto):** Erbt von Account. Hat eine Kreditlimite (negative Zahl). Beim Abheben darf das Saldo bis zu dieser Limite ins Minus gehen.
+- **PromoYouthSavingsAccount (Jugend-Sparkonto):** Erbt von SavingsAccount. Überschreibt `deposit` und gewährt bei jeder Einzahlung 1% Bonus.
+- **Bank:** Verwaltet alle Konten in einer `TreeMap` (Kontonummer → Konto). Erstellt Konten (`createSavingsAccount`, `createSalaryAccount`, `createPromoYouthSavingsAccount`), leitet Ein-/Auszahlungen an das richtige Konto weiter und kann die Top-5- bzw. Bottom-5-Konten nach Saldo ausgeben.
+- **Booking (Buchung):** Speichert eine einzelne Transaktion mit Datum und Betrag. Jede Ein- oder Auszahlung erzeugt ein Booking.
+- **BankUtils:** Hilfsklasse mit statischen Methoden zum Formatieren von Datum (`formatBankDate`) und Beträgen (`formatAmount`).
+- **AccountBalanceComparator / AccountInverseBalanceComparator:** Zwei Vergleicher zum Sortieren der Konten nach Kontostand – einmal absteigend, einmal aufsteigend. Werden für die Top-5/Bottom-5-Ausgabe verwendet.
+
+### Zusammenhänge
+
+- **Vererbung:** `Account` ist die Basis. `SavingsAccount` und `SalaryAccount` erben direkt davon, `PromoYouthSavingsAccount` erbt wiederum von `SavingsAccount`. So wird gemeinsames Verhalten (Buchungen, Kontostand) nur einmal in `Account` definiert und pro Kontotyp gezielt angepasst.
+- **Verwaltung:** Eine `Bank` besitzt viele `Account`-Objekte. Ein `Account` besitzt viele `Booking`-Objekte (jede Transaktion eine Buchung).
+- **Zusammenarbeit:** `Booking` nutzt `BankUtils` zum Formatieren beim Drucken. Die `Bank` nutzt die beiden Comparator-Klassen zum Sortieren.
+
+### Beispielablauf (aus Main)
+
+In `Main` wird eine Bank erstellt, dann ein Jugend-Sparkonto und ein Lohnkonto (mit Kreditlimite 12000) angelegt. Damit ist gezeigt, wie über die Bank verschiedene Kontotypen erzeugt werden.
+
+### Klassendiagramm
+
+![Klassendiagramm der Bank-Simulation](aufgabe3_4_bank/02_bank-vorgabe/Design/bank6_klassendiagramm.png)
