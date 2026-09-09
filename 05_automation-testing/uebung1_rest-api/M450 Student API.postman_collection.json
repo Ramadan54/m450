@@ -1,0 +1,152 @@
+{
+  "info": {
+    "_postman_id": "41adc9a3-0efa-4cfe-88a1-103fd4dde3db",
+    "name": "M450 Student API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43313866",
+    "_collection_link": "https://go.postman.co/collection/43313866-41adc9a3-0efa-4cfe-88a1-103fd4dde3db?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GET alle Studenten",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Test 1: Statuscode muss 200 sein\r",
+              "pm.test(\"Status ist 200 OK\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "// Test 2: Antwort ist JSON\r",
+              "pm.test(\"Antwort ist JSON\", function () {\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "// Test 3: Es sind mindestens 5 Studenten vorhanden\r",
+              "pm.test(\"Mindestens 5 Studenten vorhanden\", function () {\r",
+              "    const studenten = pm.response.json();\r",
+              "    pm.expect(studenten.length).to.be.at.least(5);\r",
+              "});\r",
+              "\r",
+              "// Test 4: Die 5 vorangelegten Studenten sind alle dabei\r",
+              "pm.test(\"Die Standard-Studenten sind vorhanden\", function () {\r",
+              "    const studenten = pm.response.json();\r",
+              "    const namen = studenten.map(s => s.name);\r",
+              "    pm.expect(namen).to.include.members([\"Jonas\", \"Patrick\", \"Yves\", \"Peter\", \"Ann\"]);\r",
+              "});\r",
+              "\r",
+              "// Test 5: Jeder Student hat id, name und email\r",
+              "pm.test(\"Jeder Student hat id, name und email\", function () {\r",
+              "    const studenten = pm.response.json();\r",
+              "    studenten.forEach(function (s) {\r",
+              "        pm.expect(s).to.have.property(\"id\");\r",
+              "        pm.expect(s).to.have.property(\"name\");\r",
+              "        pm.expect(s).to.have.property(\"email\");\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/students",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "students"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "POST neuer Student",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Eindeutigen Namen erzeugen, damit jeder Testlauf sauber ist\r",
+              "const eindeutig = \"Testuser_\" + Date.now();\r",
+              "pm.collectionVariables.set(\"neuerName\", eindeutig);\r",
+              "pm.collectionVariables.set(\"neueMail\", eindeutig.toLowerCase() + \"@tbz.ch\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Test 1: POST war erfolgreich\r",
+              "pm.test(\"POST war erfolgreich (Status 200)\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "// Test 2: Der neu angelegte Student ist danach wirklich in der Liste\r",
+              "pm.test(\"Neuer Student ist in der Liste vorhanden\", function () {\r",
+              "    const erwarteterName = pm.collectionVariables.get(\"neuerName\");\r",
+              "    pm.sendRequest(\"http://localhost:8081/students\", function (err, res) {\r",
+              "        pm.expect(err).to.be.null;\r",
+              "        const namen = res.json().map(s => s.name);\r",
+              "        pm.expect(namen).to.include(erwarteterName);\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{neuerName}}\",\r\n    \"email\": \"{{neueMail}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8081/students",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "students"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "neuerName",
+      "value": ""
+    },
+    {
+      "key": "neueMail",
+      "value": ""
+    }
+  ]
+}
