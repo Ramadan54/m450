@@ -1,0 +1,12 @@
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\mapper\IngredientEntityMapper.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\entities\IngredientEntity.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\entities\RecipeEntity.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\domain\Unit.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\mapper\CommonMapperConfig.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\domain\Recipe.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\service\RecipeService.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\domain\Ingredient.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\controller\RecipeController.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\repository\RecipeRepository.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\RecipePlannerApplication.java
+C:\GitHub\m450\07_cicd-pipeline\recipe-planner\recipe-planner-backend\src\main\java\ch\tbz\recipe\planner\mapper\RecipeEntityMapper.java
