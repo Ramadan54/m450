@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import './AddRecipe.css';
 import {Form, Button, Col, Row, Alert} from 'react-bootstrap';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import axios from "axios";
 import AddIngredient from "../AddIngredient/AddIngredient";
@@ -20,6 +20,39 @@ function AddRecipe() {
     const [listId, setListId] = useState(1)
     const [error, setError] = useState('')
     const navigate = useNavigate()
+
+    // with a recipeId in the URL the form is used to edit an existing recipe
+    const {recipeId} = useParams()
+    const isEdit = recipeId !== undefined
+
+    useEffect(() => {
+        if (!isEdit) {
+            return
+        }
+        axios.get(`${baseURL}/recipe/${recipeId}`)
+            .then((response) => {
+                const recipe = response.data
+                if (!recipe) {
+                    setError('This recipe does not exist.')
+                    return
+                }
+                let nextListId = 1
+                setFormData({
+                    id: recipe.id,
+                    name: recipe.name ?? '',
+                    description: recipe.description ?? '',
+                    imageUrl: recipe.imageUrl ?? '',
+                    ingredients: (recipe.ingredients ?? []).map((ingredient) => ({
+                        listId: nextListId++,
+                        name: ingredient.name ?? '',
+                        unit: ingredient.unit,
+                        amount: ingredient.amount
+                    }))
+                })
+                setListId(nextListId)
+            })
+            .catch(() => setError('The recipe could not be loaded. Is the backend running?'))
+    }, [isEdit, recipeId])
 
     const handleChange = (event) => {
         setFormData({...formData, [event.target.name]: event.target.value})
@@ -87,7 +120,11 @@ function AddRecipe() {
             }))
         }
 
-        axios.post(baseURL, recipe)
+        const request = isEdit
+            ? axios.put(`${baseURL}/recipe/${recipeId}`, recipe)
+            : axios.post(baseURL, recipe)
+
+        request
             .then(() => navigate('/'))
             .catch(() => setError('The recipe could not be saved. Is the backend running?'))
     }
@@ -103,7 +140,7 @@ function AddRecipe() {
         <>
             <div className="bg">
                 <Form className="m-3" style={{maxWidth: 'none'}} onSubmit={handleSubmit} noValidate>
-                    <h1 className="h3 bg-dark text-bg-primary mt-2">Add Recipe</h1>
+                    <h1 className="h3 bg-dark text-bg-primary mt-2">{isEdit ? 'Edit Recipe' : 'Add Recipe'}</h1>
                     {error && <Alert variant="danger">{error}</Alert>}
                     <Form.Group className="mb-1" controlId="formBasicName">
                         <Form.Label>Recipe Name:</Form.Label>
