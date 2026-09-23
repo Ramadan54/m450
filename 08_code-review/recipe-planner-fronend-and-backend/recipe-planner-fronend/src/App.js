@@ -19,7 +19,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Browse/>} />
           <Route path="/planer" element={<Planer/>} />
-          <Route path="/new-menues" element={<AddRecipe/>} />
+          <Route path="/new-menues" element={<AddRecipe key="add"/>} />
+          <Route path="/edit/:recipeId" element={<AddRecipe key="edit"/>} />
         </Routes>
       </div>
       </>
