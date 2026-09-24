@@ -13,15 +13,14 @@
 4. [Aufgabe 2 – Recipe bearbeiten](#4-aufgabe-2--recipe-bearbeiten)
 5. [Übersicht der Pull Requests](#5-übersicht-der-pull-requests)
 6. [Erkenntnisse aus der Umsetzung](#6-erkenntnisse-aus-der-umsetzung)
-7. [Code-Review](#7-code-review)
 
 ---
 
 ## 1. Ausgangslage und Vorgehen
 
-Ziel von Block 8 ist es, Features in einem eigenen Branch umzusetzen, dafür Pull Requests zu erstellen und diese gegenseitig zu reviewen (Vier-Augen-Prinzip).
+Ziel von Block 8 ist es, Features in einem eigenen Branch umzusetzen und dafür Pull Requests zu erstellen, die sich gut reviewen lassen (Vier-Augen-Prinzip).
 
-Da ich das Modul allein bearbeite, habe ich die Implementation und die Pull Requests selbständig umgesetzt. Das Review erfolgt durch eine zweite Person, die Abklärung dazu mit der Lehrperson läuft. Kapitel 7 wird nach dem Review ergänzt.
+Ich habe das Modul allein bearbeitet. Nach Absprache mit der Lehrperson entfällt das gegenseitige Review, umzusetzen sind die zwei Features. Die Implementation und die Pull Requests habe ich selbständig umgesetzt und dabei darauf geachtet, dass sie für einen Reviewer gut nachvollziehbar sind.
 
 Für jedes Feature gilt derselbe Ablauf:
 
@@ -29,7 +28,7 @@ Für jedes Feature gilt derselbe Ablauf:
 2. Feature implementieren
 3. Vorher/Nachher testen und mit Screenshots belegen
 4. Committen, pushen und Pull Request erstellen
-5. Pull Request offen lassen bis zum Review (kein Merge)
+5. Pull Request mit Beschreibung, Testanleitung und bekannten Punkten versehen
 
 ---
 
@@ -271,7 +270,7 @@ Nach dem Ändern und Speichern wird ein PUT auf die Rezept-ID gesendet (Status 2
 
 Alle Pull Requests liegen unter der Empfehlung von 200 bis 400 geänderten Zeilen und sind damit in einem Review gut überschaubar. Die CI-Pipeline aus Block 7 läuft bei jedem Pull Request automatisch und war bei allen erfolgreich.
 
-Geplante Merge-Reihenfolge nach dem Review: **#1 → #2 → #3**
+Werden die Pull Requests gemergt, ist die Reihenfolge **#1 → #2 → #3** einzuhalten, da #3 auf #1 aufbaut und den Endpoint aus #2 benötigt.
 
 ---
 
@@ -303,32 +302,3 @@ Diese Punkte sind beim Umsetzen aufgefallen, gehören aber nicht zu den Features
 | Frontend | Rezepte können nicht gelöscht werden |
 | Frontend | ESLint-Konfiguration ist mit aktuellen Paketversionen nicht kompatibel |
 
----
-
-## 7. Code-Review
-
-> Dieses Kapitel wird nach dem Review ergänzt.
-
-### 7.1 Reviewer
-
-_Wird ergänzt._
-
-### 7.2 Erhaltene Kommentare zu meinen Pull Requests
-
-| PR | Kommentar | Meine Reaktion |
-|---|---|---|
-| | | |
-
-### 7.3 Meine Kommentare zu den Pull Requests des Partners
-
-| PR | Kommentar |
-|---|---|
-| | |
-
-### 7.4 Vergleich und Diskussion
-
-_Wird ergänzt._
-
-### 7.5 Erkenntnisse aus dem Review
-
-_Wird ergänzt._
