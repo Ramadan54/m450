@@ -11,12 +11,23 @@ public class PreisRechner {
     public static final BigDecimal STAMMKUNDENRABATT_SATZ = new BigDecimal("0.10");
 
     public BigDecimal berechnePreis(BigDecimal arbeitsstunden, BigDecimal teilekosten, boolean stammkunde) {
+        validiereEingaben(arbeitsstunden, teilekosten);
+
         BigDecimal zwischensumme = berechneZwischensumme(arbeitsstunden, teilekosten);
         BigDecimal rabattsatz = berechneRabattsatz(zwischensumme, stammkunde);
 
         return zwischensumme
                 .multiply(BigDecimal.ONE.subtract(rabattsatz))
                 .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private void validiereEingaben(BigDecimal arbeitsstunden, BigDecimal teilekosten) {
+        if (arbeitsstunden.signum() < 0) {
+            throw new IllegalArgumentException("Arbeitsstunden dürfen nicht negativ sein");
+        }
+        if (teilekosten.signum() < 0) {
+            throw new IllegalArgumentException("Teilekosten dürfen nicht negativ sein");
+        }
     }
 
     private BigDecimal berechneZwischensumme(BigDecimal arbeitsstunden, BigDecimal teilekosten) {
