@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PreisRechnerTest {
 
@@ -70,5 +71,23 @@ class PreisRechnerTest {
 
         // 1500 CHF → 5 % Mengenrabatt + 10 % Stammkundenrabatt = 15 % → 1275 CHF
         assertThat(preis).isEqualByComparingTo("1275.00");
+    }
+
+    // ---------- Zyklus 4: Validierung ungültiger Eingaben ----------
+
+    @Test
+    void berechnePreis_negativeArbeitsstunden_wirftException() {
+        assertThatThrownBy(() ->
+                preisRechner.berechnePreis(new BigDecimal("-1"), new BigDecimal("100.00"), false))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Arbeitsstunden");
+    }
+
+    @Test
+    void berechnePreis_negativeTeilekosten_wirftException() {
+        assertThatThrownBy(() ->
+                preisRechner.berechnePreis(new BigDecimal("2"), new BigDecimal("-50.00"), false))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Teilekosten");
     }
 }
