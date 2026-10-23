@@ -1,6 +1,7 @@
 package ch.tbz.werkstatt.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class PreisRechner {
 
@@ -10,9 +11,19 @@ public class PreisRechner {
     public static final BigDecimal STAMMKUNDENRABATT_SATZ = new BigDecimal("0.10");
 
     public BigDecimal berechnePreis(BigDecimal arbeitsstunden, BigDecimal teilekosten, boolean stammkunde) {
-        BigDecimal arbeitskosten = arbeitsstunden.multiply(STUNDENSATZ);
-        BigDecimal zwischensumme = arbeitskosten.add(teilekosten);
+        BigDecimal zwischensumme = berechneZwischensumme(arbeitsstunden, teilekosten);
+        BigDecimal rabattsatz = berechneRabattsatz(zwischensumme, stammkunde);
 
+        return zwischensumme
+                .multiply(BigDecimal.ONE.subtract(rabattsatz))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    private BigDecimal berechneZwischensumme(BigDecimal arbeitsstunden, BigDecimal teilekosten) {
+        return arbeitsstunden.multiply(STUNDENSATZ).add(teilekosten);
+    }
+
+    private BigDecimal berechneRabattsatz(BigDecimal zwischensumme, boolean stammkunde) {
         BigDecimal rabattsatz = BigDecimal.ZERO;
         if (zwischensumme.compareTo(MENGENRABATT_GRENZE) >= 0) {
             rabattsatz = rabattsatz.add(MENGENRABATT_SATZ);
@@ -20,7 +31,6 @@ public class PreisRechner {
         if (stammkunde) {
             rabattsatz = rabattsatz.add(STAMMKUNDENRABATT_SATZ);
         }
-
-        return zwischensumme.multiply(BigDecimal.ONE.subtract(rabattsatz));
+        return rabattsatz;
     }
 }
