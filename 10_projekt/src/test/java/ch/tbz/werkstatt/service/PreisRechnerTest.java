@@ -53,4 +53,22 @@ class PreisRechnerTest {
         // 10 h × 120 CHF + 300 CHF = 1500 CHF → 5 % Rabatt = 1425 CHF
         assertThat(preis).isEqualByComparingTo("1425.00");
     }
+
+    // ---------- Zyklus 3: Stammkundenrabatt 10 % ----------
+
+    @Test
+    void berechnePreis_stammkundeUnter1000_erhaeltNurStammkundenrabatt() {
+        BigDecimal preis = preisRechner.berechnePreis(new BigDecimal("2"), new BigDecimal("150.00"), true);
+
+        // 390 CHF → 10 % Stammkundenrabatt = 351 CHF
+        assertThat(preis).isEqualByComparingTo("351.00");
+    }
+
+    @Test
+    void berechnePreis_stammkundeUeber1000_erhaeltBeideRabatte() {
+        BigDecimal preis = preisRechner.berechnePreis(new BigDecimal("10"), new BigDecimal("300.00"), true);
+
+        // 1500 CHF → 5 % Mengenrabatt + 10 % Stammkundenrabatt = 15 % → 1275 CHF
+        assertThat(preis).isEqualByComparingTo("1275.00");
+    }
 }
