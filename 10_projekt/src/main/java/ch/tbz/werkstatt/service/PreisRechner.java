@@ -1,8 +1,11 @@
 package ch.tbz.werkstatt.service;
 
+import org.springframework.stereotype.Component;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+@Component
 public class PreisRechner {
 
     public static final BigDecimal STUNDENSATZ = new BigDecimal("120.00");
