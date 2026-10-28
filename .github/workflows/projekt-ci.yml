@@ -1,0 +1,126 @@
+name: CI/CD - Projekt Auftragsservice
+
+# Startet bei jedem Push auf main, der das Projekt betrifft
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '10_projekt/**'
+      - '.github/workflows/projekt-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+# Alle Befehle laufen im Projektordner
+defaults:
+  run:
+    working-directory: 10_projekt
+
+jobs:
+  # ---------- Stage 1: Build ----------
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: JDK 17 installieren
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Projekt kompilieren
+        run: ./mvnw -B clean compile
+
+  # ---------- Stage 2: Test ----------
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: JDK 17 installieren
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Tests ausführen (inkl. JaCoCo-Coverage)
+        run: ./mvnw -B test
+
+      - name: Surefire-HTML-Report erzeugen
+        if: always()
+        run: ./mvnw -B surefire-report:report-only
+
+      - name: Testresultate in GitHub anzeigen
+        if: always()
+        uses: mikepenz/action-junit-report@v5
+        with:
+          report_paths: '10_projekt/target/surefire-reports/TEST-*.xml'
+          detailed_summary: true
+          include_passed: true
+
+      - name: Reports für die Veröffentlichung zusammenstellen
+        if: always()
+        run: |
+          mkdir -p public/tests public/coverage
+          cp -r target/reports/* public/tests/
+          cp -r target/site/jacoco/* public/coverage/
+          cat > public/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+            <meta charset="UTF-8">
+            <title>Testreports - Tuning-Werkstatt Auftragsservice</title>
+            <style>
+              body { font-family: Arial, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 16px; }
+              a { display: block; margin: 12px 0; font-size: 1.2em; }
+            </style>
+          </head>
+          <body>
+            <h1>Tuning-Werkstatt Auftragsservice</h1>
+            <p>Automatisch erzeugte Reports der CI/CD-Pipeline (M450 Abschlussprojekt).</p>
+            <a href="tests/surefire.html"> Testresultate (Surefire-Report)</a>
+            <a href="coverage/index.html"> Code Coverage (JaCoCo-Report)</a>
+          </body>
+          </html>
+          EOF
+
+      - name: Reports als Artifact hochladen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: 10_projekt/public/
+
+      - name: Reports für GitHub Pages vorbereiten
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 10_projekt/public/
+
+  # ---------- Stage 3: Deploy ----------
+  deploy:
+    name: Deploy
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Reports auf GitHub Pages veröffentlichen
+        id: deployment
+        uses: actions/deploy-pages@v4
